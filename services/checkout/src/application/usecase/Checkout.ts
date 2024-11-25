@@ -11,7 +11,10 @@ export default class Checkout {
     async execute(input: Input): Promise<Output> {
         const course = await this.courseRepository.get(input.courseId);
         const order = Order.create(input.courseId, input.name, input.email, course.amount);
-
+        await this.orderRepository.save(order)
+        return {
+            orderId: order.orderId
+        };
     }
 }
 

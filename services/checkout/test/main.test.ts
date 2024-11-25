@@ -1,3 +1,5 @@
+import Checkout from "../src/application/usecase/Checkout";
+
 test("Deve realizar o checkout", async function() {
     const orderRepository = new OrderRepository();
     const courseRepository = new CourseRepository();
