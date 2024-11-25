@@ -1,3 +1,4 @@
+import Order from "../../domain/Order";
 import CourseRepository from "../repository/CourseRepository";
 import OrderRepository from "../repository/OrderRepository";
 
@@ -9,7 +10,7 @@ export default class Checkout {
 
     async execute(input: Input): Promise<Output> {
         const course = await this.courseRepository.get(input.courseId);
-        const order = Order.create();
+        const order = Order.create(input.courseId, input.name, input.email, course.amount);
 
     }
 }
