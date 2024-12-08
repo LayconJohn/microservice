@@ -8,7 +8,7 @@ export default class CourseRepositoryDatabase implements CourseRepository {
         const [courseData] = await connection.query("SELECT * FROM microservices_course WHERE course_id = $1", [courseId])
         await connection.$pool.end();
         return new Course(
-            courseData.courseId,
+            courseData.course_id,
             courseData.title,
             parseFloat(courseData.amount)
         );

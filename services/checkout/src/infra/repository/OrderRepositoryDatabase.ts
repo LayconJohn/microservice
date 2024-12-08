@@ -21,8 +21,8 @@ export default class OrderRepositoryDatabase implements OrderRepository {
         await connection.$pool.end();
 
         return new Order(
-            orderData.orderId, 
-            orderData.courseId, 
+            orderData.order_id, 
+            orderData.course_id, 
             orderData.name, 
             orderData.email, 
             parseFloat(orderData.amount), 
