@@ -1,4 +1,6 @@
 import Order from "../../domain/Order";
+import Queue from "../../infra/queue/Queue";
+import RabbitMQAdapter from "../../infra/queue/RabbitMQAdapter";
 import PaymentGateway from "../gateway/PaymentGateway";
 import CourseRepository from "../repository/CourseRepository";
 import OrderRepository from "../repository/OrderRepository";
@@ -8,12 +10,15 @@ export default class Checkout {
         readonly orderRepository: OrderRepository,
         readonly courseRepository: CourseRepository,
         readonly paymentGateway: PaymentGateway,
+        readonly queue: Queue
     ) {}
 
     async execute(input: Input): Promise<Output> {
         const course = await this.courseRepository.get(input.courseId);
         const order = Order.create(input.courseId, input.name, input.email, course.amount);
         await this.orderRepository.save(order)
+
+        //síncrono
         const inputProcessPayment = {
             orderId: order.orderId,
             amount: course.amount,
@@ -24,6 +29,15 @@ export default class Checkout {
             order.confirm();
             await this.orderRepository.update(order);
         }
+
+        //assíncrono
+        const orderPlacedEvent = {
+            orderId: order.orderId,
+            amount: course.amount,
+            creditCardToken: input.creditCardToken
+        }
+        await this.queue.publish("orderPlaced", orderPlacedEvent);
+
         return {
             orderId: order.orderId
         };

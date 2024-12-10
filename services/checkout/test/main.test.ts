@@ -4,12 +4,20 @@ import CourseRepositoryDatabase from "../src/infra/repository/CourseRepositoryDa
 import OrderRepositoryDatabase from "../src/infra/repository/OrderRepositoryDatabase";
 import PaymentGateway from "../src/application/gateway/PaymentGateway";
 import PaymentGatewayHttp from "../src/infra/gateway/PaymentGatewayHttp";
+import RabbitMQAdapter from "../src/infra/queue/RabbitMQAdapter";
 
 test("Deve realizar o checkout", async function() {
     const orderRepository = new OrderRepositoryDatabase();
     const courseRepository = new CourseRepositoryDatabase();
     const paymentGateway = new PaymentGatewayHttp()
-    const checkout = new Checkout(orderRepository, courseRepository, paymentGateway);
+    const queue = new RabbitMQAdapter();
+    queue.connect();
+    const checkout = new Checkout(
+        orderRepository, 
+        courseRepository, 
+        paymentGateway,
+        queue
+    );
     const input = {
         courseId: "83e88f3a-49a5-43e0-a07a-8dd9e64c0915",
         name: "John Doe",
