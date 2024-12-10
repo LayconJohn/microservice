@@ -2,11 +2,14 @@ import Checkout from "../src/application/usecase/Checkout";
 import GetOrder from "../src/application/usecase/GetOrder";
 import CourseRepositoryDatabase from "../src/infra/repository/CourseRepositoryDatabase";
 import OrderRepositoryDatabase from "../src/infra/repository/OrderRepositoryDatabase";
+import PaymentGateway from "../src/application/gateway/PaymentGateway";
+import PaymentGatewayHttp from "../src/infra/gateway/PaymentGatewayHttp";
 
 test("Deve realizar o checkout", async function() {
     const orderRepository = new OrderRepositoryDatabase();
     const courseRepository = new CourseRepositoryDatabase();
-    const checkout = new Checkout(orderRepository, courseRepository);
+    const paymentGateway = new PaymentGatewayHttp()
+    const checkout = new Checkout(orderRepository, courseRepository, paymentGateway);
     const input = {
         courseId: "83e88f3a-49a5-43e0-a07a-8dd9e64c0915",
         name: "John Doe",
@@ -23,5 +26,5 @@ test("Deve realizar o checkout", async function() {
     expect(outputGetOrder.name).toBe("John Doe");
     expect(outputGetOrder.email).toBe("johndoe@email.com");
     expect(outputGetOrder.amount).toBe(1199);
-    expect(outputGetOrder.status).toBe("waiting_payment");
+    expect(outputGetOrder.status).toBe("confirmed");
 });

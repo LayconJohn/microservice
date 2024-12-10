@@ -7,8 +7,16 @@ export default class Order {
         readonly name: string,
         readonly email: string,
         readonly amount: number,
-        readonly status: string
+        private status: string
     ){}
+
+    confirm() {
+        this.status = "confirmed"
+    }
+
+    getStatus() {
+        return this.status;
+    }
 
     static create(courseId: string, name: string, email: string, amount: number) {
         const orderId = crypto.randomUUID();
