@@ -19,6 +19,7 @@ export default class Checkout {
         await this.orderRepository.save(order)
 
         //síncrono
+        /*
         const inputProcessPayment = {
             orderId: order.orderId,
             amount: course.amount,
@@ -29,6 +30,7 @@ export default class Checkout {
             order.confirm();
             await this.orderRepository.update(order);
         }
+        */
 
         //assíncrono
         const orderPlacedEvent = {
