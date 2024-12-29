@@ -6,6 +6,14 @@ import PaymentGateway from "../src/application/gateway/PaymentGateway";
 import PaymentGatewayHttp from "../src/infra/gateway/PaymentGatewayHttp";
 import RabbitMQAdapter from "../src/infra/queue/RabbitMQAdapter";
 
+async function sleep(time: number) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    })
+}
+
 test("Deve realizar o checkout", async function() {
     const orderRepository = new OrderRepositoryDatabase();
     const courseRepository = new CourseRepositoryDatabase();
@@ -27,12 +35,13 @@ test("Deve realizar o checkout", async function() {
     }
     const outputCheckout = await checkout.execute(input);
     expect(outputCheckout.orderId).toBeDefined();
-
-    const getOrder = new GetOrder(orderRepository);
+    await sleep(200);
+    const getOrder = new GetOrder(orderRepository, courseRepository);
     const outputGetOrder = await getOrder.execute(outputCheckout.orderId);
     expect(outputGetOrder.orderId).toBeDefined();
     expect(outputGetOrder.name).toBe("John Doe");
     expect(outputGetOrder.email).toBe("johndoe@email.com");
     expect(outputGetOrder.amount).toBe(1199);
+    expect(outputGetOrder.courseTitle).toBe("Microservice with Clean Arch")
     expect(outputGetOrder.status).toBe("confirmed");
 });
